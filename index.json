@@ -1,0 +1,25 @@
+{
+  "version": "2025.11.27",
+  "models": [
+    {
+      "id": "ggml-base-zh",
+      "name": "Whisper Base 中文优化版",
+      "size": 145000000,
+      "displaySize": "145MB",
+      "file": "https://huggingface.co/.../ggml-base-zh.bin",
+      "tags": ["中文", "推荐"],
+      "lang": "zh",
+      "description": "适用于中文会议、日常对话和访谈"
+    },
+    {
+      "id": "ggml-base-en",
+      "name": "Whisper Base 英文优化版",
+      "size": 128000000,
+      "displaySize": "128MB",
+      "file": "https://huggingface.co/.../ggml-base-en.bin",
+      "tags": ["英文"],
+      "lang": "en",
+      "description": "适用于英文会议、英文讲座"
+    }
+  ]
+}
