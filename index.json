@@ -2,24 +2,64 @@
   "version": "2025.11.27",
   "models": [
     {
-      "id": "ggml-base-zh",
-      "name": "Whisper Base 中文优化版",
-      "size": 145000000,
-      "displaySize": "145MB",
-      "file": "https://huggingface.co/.../ggml-base-zh.bin",
-      "tags": ["中文", "推荐"],
-      "lang": "zh",
-      "description": "适用于中文会议、日常对话和访谈"
+      "id": "ggml-tiny",
+      "name": "Whisper Tiny 多语言",
+      "size": 77700000,
+      "displaySize": "77.7MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin",
+      "tags": ["多语言", "轻量"],
+      "lang": "multi",
+      "description": "占用最小，适合实时体验或低性能机器。"
+    },
+    {
+      "id": "ggml-tiny-en",
+      "name": "Whisper Tiny 英文",
+      "size": 77700000,
+      "displaySize": "77.7MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin",
+      "tags": ["英文", "轻量"],
+      "lang": "en",
+      "description": "英文环境下的轻量模型。"
+    },
+    {
+      "id": "ggml-base",
+      "name": "Whisper Base 多语言",
+      "size": 148000000,
+      "displaySize": "148MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin",
+      "tags": ["多语言", "推荐"],
+      "lang": "multi",
+      "description": "平衡速度和准确度，适合大多数日常场景。"
     },
     {
       "id": "ggml-base-en",
-      "name": "Whisper Base 英文优化版",
-      "size": 128000000,
-      "displaySize": "128MB",
-      "file": "https://huggingface.co/.../ggml-base-en.bin",
-      "tags": ["英文"],
+      "name": "Whisper Base 英文",
+      "size": 148000000,
+      "displaySize": "148MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin",
+      "tags": ["英文", "推荐"],
       "lang": "en",
-      "description": "适用于英文会议、英文讲座"
+      "description": "英文会议 / 讲座 / 访谈的推荐模型。"
+    },
+    {
+      "id": "ggml-small",
+      "name": "Whisper Small 多语言",
+      "size": 488000000,
+      "displaySize": "488MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.bin",
+      "tags": ["多语言", "高精度"],
+      "lang": "multi",
+      "description": "对精度要求更高、机器性能尚可的场景。"
+    },
+    {
+      "id": "ggml-small-en",
+      "name": "Whisper Small 英文",
+      "size": 488000000,
+      "displaySize": "488MB",
+      "file": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin",
+      "tags": ["英文", "高精度"],
+      "lang": "en",
+      "description": "英文环境高精度识别。"
     }
   ]
 }
