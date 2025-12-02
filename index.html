@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family:sans-serif;padding:20px;">
+    <h3>AI 剧本生成器（超简版）</h3>
+
+    <p>角色：</p>
+    <textarea id="characters" rows="3" style="width:100%;"></textarea>
+
+    <p>场景：</p>
+    <textarea id="scene" rows="2" style="width:100%;"></textarea>
+
+    <p>冲突 / 任务：</p>
+    <textarea id="conflict" rows="2" style="width:100%;"></textarea>
+
+    <br><br>
+    <button onclick="generate()">生成剧本</button>
+
+    <h4>生成结果：</h4>
+    <div id="output" style="white-space:pre-line;"></div>
+
+    <script>
+      async function generate(){
+        const prompt = `
+你是一个专业的剧本作者，请根据以下信息生成 300 字剧情：
+角色：${characters.value}
+场景：${scene.value}
+冲突：${conflict.value}
+`;
+
+        const res = await fetch("https://api.moonshot.cn/v1/chat/completions", {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer 你的Kimi Key"
+          },
+          body:JSON.stringify({
+            model:"moonshot-v1-32k",
+            messages:[{role:"user",content:prompt}]
+          })
+        });
+
+        const data = await res.json();
+        output.textContent = data.choices[0].message.content;
+      }
+    </script>
+  </body>
+</html>
