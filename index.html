@@ -1,47 +1,342 @@
-<!DOCTYPE html>
-<html>
-  <body style="font-family:sans-serif;padding:20px;">
-    <h3>AI 剧本生成器（超简版）</h3>
-
-    <p>角色：</p>
-    <textarea id="characters" rows="3" style="width:100%;"></textarea>
-
-    <p>场景：</p>
-    <textarea id="scene" rows="2" style="width:100%;"></textarea>
-
-    <p>冲突 / 任务：</p>
-    <textarea id="conflict" rows="2" style="width:100%;"></textarea>
-
-    <br><br>
-    <button onclick="generate()">生成剧本</button>
-
-    <h4>生成结果：</h4>
-    <div id="output" style="white-space:pre-line;"></div>
-
-    <script>
-      async function generate(){
-        const prompt = `
-你是一个专业的剧本作者，请根据以下信息生成 300 字剧情：
-角色：${characters.value}
-场景：${scene.value}
-冲突：${conflict.value}
-`;
-
-        const res = await fetch("https://api.moonshot.cn/v1/chat/completions", {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            "Authorization":"Bearer sk-Qn7lwvhw83GRMMb3mElFpFZzXbREwv8TxWj8J3tnj6RInOLf"
-          },
-          body:JSON.stringify({
-            model:"moonshot-v1-32k",
-            messages:[{role:"user",content:prompt}]
-          })
-        });
-
-        const data = await res.json();
-        output.textContent = data.choices[0].message.content;
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>WinWhisper - Windows 本地离线语音转写工具</title>
+    <meta
+      name="description"
+      content="WinWhisper 是面向 Windows 的本地离线语音转写工具，支持音频 / 视频拖拽导入，一键生成文本与字幕文件（TXT / SRT / VTT），全程离线，无需上传到云端。"
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
       }
-    </script>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
+          'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        color: #0f172a;
+        background: radial-gradient(circle at top, #eff6ff 0, #f9fafb 40%, #fff);
+      }
+      .page {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 20px 40px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: radial-gradient(circle at 20% 0, #93c5fd, #2563eb);
+        color: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 20px;
+      }
+      .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .brand-tag {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.12);
+        color: #2563eb;
+        margin-left: 6px;
+      }
+      .nav a {
+        font-size: 13px;
+        color: #64748b;
+        text-decoration: none;
+        margin-left: 14px;
+      }
+      .nav a:hover {
+        color: #0f172a;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 28px;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      .hero-title {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0 0 10px;
+        letter-spacing: 0.02em;
+      }
+      .hero-subtitle {
+        font-size: 14px;
+        color: #475569;
+        margin: 0 0 18px;
+        line-height: 1.6;
+      }
+      .hero-badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: #475569;
+        background: rgba(248, 250, 252, 0.8);
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 18px;
+        border-radius: 999px;
+        border: none;
+        background: #2563eb;
+        color: #f9fafb;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid #cbd5f5;
+        color: #1d4ed8;
+        background: #eff6ff;
+        font-size: 13px;
+        text-decoration: none;
+      }
+      .btn-secondary:hover {
+        background: #dbeafe;
+      }
+      .hero-note {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 8px;
+      }
+
+      .hero-card {
+        border-radius: 18px;
+        padding: 14px 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+      }
+      .hero-card-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .hero-card-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+        color: #475569;
+      }
+      .hero-card-list li {
+        margin-bottom: 6px;
+      }
+      .hero-card-tag {
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #2563eb;
+        margin-left: 6px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 12px;
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+      .feature-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        font-size: 13px;
+      }
+      .feature-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .feature-desc {
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .footer {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        font-size: 11px;
+        color: #94a3b8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .footer a {
+        color: #64748b;
+        text-decoration: none;
+        margin-left: 10px;
+      }
+      .footer a:hover {
+        color: #0f172a;
+      }
+
+      @media (max-width: 800px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .features {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="brand">
+          <div class="logo">W</div>
+          <div>
+            <div class="brand-name">
+              WinWhisper
+              <span class="brand-tag">Beta</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8">
+              Windows 本地离线语音转写工具
+            </div>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="#features">功能特性</a>
+          <a href="https://github.com/yourname/win-whisper" target="_blank"
+            >GitHub</a
+          >
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <h1 class="hero-title">拖拽音视频，一键生成字幕</h1>
+            <p class="hero-subtitle">
+              WinWhisper 是一款专为 Windows 用户打造的本地离线语音转写工具。
+              支持将音频 / 视频文件转换为文本，以及 SRT / VTT 字幕文件，适合播客整理、访谈记录、课程笔记等场景。
+            </p>
+            <div class="hero-badges">
+              <span class="badge">完全离线 · 不上传资料</span>
+              <span class="badge">内置 Whisper 模型 · 开箱即用</span>
+              <span class="badge">支持 TXT / SRT / VTT 导出</span>
+            </div>
+            <div class="hero-actions">
+              <a
+                class="btn-primary"
+                href="https://github.com/yourname/win-whisper/releases/latest"
+                target="_blank"
+                >下载 WinWhisper for Windows</a
+              >
+            </div>
+            <div class="hero-note">
+              仅支持 Windows 10 / 11 x64。转写过程在本地完成。
+            </div>
+          </div>
+          <aside class="hero-card">
+            <div class="hero-card-title">一分钟了解 WinWhisper</div>
+            <ul class="hero-card-list">
+              <li>
+                拖拽音频 / 视频文件到主界面即可创建转写任务
+                <span class="hero-card-tag">拖拽即用</span>
+              </li>
+              <li>自动调用内置 ffmpeg 进行格式转换，适配大部分媒体文件</li>
+              <li>使用 Whisper 模型进行高质量语音识别，支持多种语言</li>
+              <li>生成 TXT / SRT / VTT 文件，方便剪辑、字幕制作与归档</li>
+              <li>所有处理在本地完成，适合对隐私有要求的场景</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section id="features">
+          <h2 class="section-title">核心特性</h2>
+          <div class="features">
+            <div class="feature-card">
+              <div class="feature-title">本地离线 · 隐私优先</div>
+              <div class="feature-desc">
+                转写过程在本地完成，不上传音频到云端服务器。适合企业内部会议、访谈、课堂录音等对隐私敏感的内容。
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-title">拖拽即用的转写体验</div>
+              <div class="feature-desc">
+                支持直接拖拽音频 / 视频文件到窗口，自动创建转写任务，并在右侧实时显示结果。
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-title">字幕导出与历史记录</div>
+              <div class="feature-desc">
+                一键导出 TXT / SRT / VTT
+                文件，方便导入剪辑软件。内置历史记录面板，可以快速查看和复用转写结果。
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>© 2025 WinWhisper. All rights reserved.</div>
+        <div>
+          <a href="https://github.com/yourname/win-whisper/issues" target="_blank"
+            >反馈问题</a
+          >
+          <a href="https://github.com/yourname/win-whisper" target="_blank"
+            >GitHub</a
+          >
+        </div>
+      </footer>
+    </div>
   </body>
 </html>
