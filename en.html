@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WinWhisper - Offline Whisper Transcription Tool for Windows</title>
+    <meta
+      name="description"
+      content="WinWhisper is a local offline transcription tool for Windows. Drag and drop audio / video files to generate text and subtitles (TXT / SRT / VTT). All processing is done locally, nothing is uploaded."
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+        background: radial-gradient(circle at top, #eff6ff 0, #f9fafb 40%, #fff);
+      }
+      .page {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 20px 40px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: radial-gradient(circle at 20% 0, #93c5fd, #2563eb);
+        color: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 20px;
+      }
+      .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .brand-tag {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.12);
+        color: #2563eb;
+        margin-left: 6px;
+      }
+      .brand-subtitle {
+        font-size: 11px;
+        color: #94a3b8;
+      }
+      .nav a {
+        font-size: 13px;
+        color: #64748b;
+        text-decoration: none;
+        margin-left: 14px;
+      }
+      .nav a:hover {
+        color: #0f172a;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 28px;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      .hero-title {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0 0 10px;
+        letter-spacing: 0.02em;
+      }
+      .hero-subtitle {
+        font-size: 14px;
+        color: #475569;
+        margin: 0 0 18px;
+        line-height: 1.6;
+      }
+      .hero-badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: #475569;
+        background: rgba(248, 250, 252, 0.8);
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 18px;
+        border-radius: 999px;
+        border: none;
+        background: #2563eb;
+        color: #f9fafb;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .hero-note {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 8px;
+      }
+
+      .hero-card {
+        border-radius: 18px;
+        padding: 14px 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+      }
+      .hero-card-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .hero-card-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+        color: #475569;
+      }
+      .hero-card-list li {
+        margin-bottom: 6px;
+      }
+      .hero-card-tag {
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #2563eb;
+        margin-left: 6px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 12px;
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+      .feature-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        font-size: 13px;
+      }
+      .feature-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .feature-desc {
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .footer {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(226, 232, 240, 0.8);
+        font-size: 11px;
+        color: #94a3b8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .footer a {
+        color: #64748b;
+        text-decoration: none;
+        margin-left: 10px;
+      }
+      .footer a:hover {
+        color: #0f172a;
+      }
+
+      @media (max-width: 800px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .features {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="brand">
+          <div class="logo">W</div>
+          <div>
+            <div class="brand-name">
+              WinWhisper
+              <span class="brand-tag">Beta</span>
+            </div>
+            <div class="brand-subtitle">
+              Offline transcription tool for Windows
+            </div>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="#features">Features</a>
+          <a href="https://github.com/codezen-dev/winwhisper-models" target="_blank">GitHub</a>
+          <a href="./index.html">中文</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <h1 class="hero-title">Drag & drop to generate subtitles</h1>
+            <p class="hero-subtitle">
+              WinWhisper is an offline transcription tool designed for Windows users.
+              It converts audio / video files into plain text and subtitle files (SRT / VTT),
+              ideal for podcasts, interviews, lectures and meeting notes.
+            </p>
+            <div class="hero-badges">
+              <span class="badge">Fully offline · No upload</span>
+              <span class="badge">Whisper models built-in · Ready to use</span>
+              <span class="badge">Export TXT / SRT / VTT</span>
+            </div>
+            <div class="hero-actions">
+              <a
+                class="btn-primary"
+                href="https://github.com/codezen-dev/winwhisper-models/releases/latest"
+                target="_blank"
+              >
+                Download WinWhisper for Windows
+              </a>
+            </div>
+            <div class="hero-note">
+              Windows 10 / 11 x64 only. All processing is done locally on your machine.
+            </div>
+          </div>
+          <aside class="hero-card">
+            <div class="hero-card-title">Get to know WinWhisper in 1 minute</div>
+            <ul class="hero-card-list">
+              <li>
+                Drag audio / video files onto the main window to create a task
+                <span class="hero-card-tag">Drag & drop</span>
+              </li>
+              <li>Automatically uses bundled ffmpeg to handle most media formats</li>
+              <li>High-quality speech recognition powered by Whisper</li>
+              <li>Generate TXT / SRT / VTT for editing, captioning and archiving</li>
+              <li>Everything stays on your device – perfect for sensitive recordings</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section id="features">
+          <h2 class="section-title">Key features</h2>
+          <div class="features">
+            <div class="feature-card">
+              <div class="feature-title">Local & private</div>
+              <div class="feature-desc">
+                Transcription runs entirely on your computer, without uploading audio
+                to any server. Suitable for internal meetings, interviews and classes
+                where privacy matters.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-title">Frictionless workflow</div>
+              <div class="feature-desc">
+                Drag audio / video files to the window to start. Tasks are created automatically
+                and results are displayed in real time on the right.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-title">Subtitles & history</div>
+              <div class="feature-desc">
+                One-click export to TXT / SRT / VTT for NLE tools. Built-in history panel
+                lets you quickly reopen and reuse previous transcripts.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>© 2025 WinWhisper. All rights reserved.</div>
+        <div>
+          <a href="https://github.com/codezen-dev/winwhisper-models/issues" target="_blank">
+            Report an issue
+          </a>
+          <a href="https://github.com/codezen-dev/winwhisper-models" target="_blank">
+            GitHub
+          </a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
